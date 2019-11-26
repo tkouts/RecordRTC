@@ -104,7 +104,7 @@ function RecordRTC(mediaStream, config) {
         }
     }
 
-    function stopRecording(callback) {
+    function stopRecording(callback, discard) {
         callback = callback || function() {};
 
         if (!mediaRecorder) {
@@ -116,7 +116,7 @@ function RecordRTC(mediaStream, config) {
             self.resumeRecording();
 
             setTimeout(function() {
-                stopRecording(callback);
+                stopRecording(callback, discard);
             }, 1);
             return;
         }
@@ -129,11 +129,10 @@ function RecordRTC(mediaStream, config) {
             console.log('Stopped recording ' + config.type + ' stream.');
         }
 
-        if (config.type !== 'gif') {
-            mediaRecorder.stop(_callback);
+        if (discard) {
+            mediaRecorder.stop(callback, discard);
         } else {
-            mediaRecorder.stop();
-            _callback();
+            mediaRecorder.stop(_callback);
         }
 
         setState('stopped');
